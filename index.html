@@ -26,9 +26,12 @@
 <script>
   // URL de la app de Apps Script (implementación pública del portal)
   const PORTAL = 'https://script.google.com/macros/s/AKfycbzRN8CzRsDlYz0x_dTEMTx_jD82NFPZrwUoSrIvdIS01dlc_6IpDtami8Rl69NbjzukqQ/exec?p=socio';
-  const f = document.getElementById('f');
-  f.onload = () => { const s = document.getElementById('splash'); s.style.opacity = 0; setTimeout(() => s.remove(), 400); };
-  f.src = PORTAL;
+  const f = document.getElementById('f'); let cargado = 0;
+  function abrir() { f.src = PORTAL + '&v=' + Date.now(); cargado = Date.now(); }
+  f.onload = () => { const s = document.getElementById('splash'); if (s) { s.style.opacity = 0; setTimeout(() => s.remove(), 400); } };
+  abrir();
+  // Al volver a la app despues de un rato, recarga para mostrar siempre la version mas nueva
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Date.now() - cargado > 5 * 60 * 1000) abrir(); });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
